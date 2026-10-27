@@ -40,14 +40,20 @@ Run `moon run cmd/main -- tests/fixtures/plain` to get a real sample report:
   handles line and block comments, quotes and shebangs. Differential tests
   compare its results with the runnable upstream release.
 
-## Build & Run
+## Install, build and run
+
+Install the [MoonBit toolchain](https://www.moonbitlang.com/download/) first.
+The required compiler version is **moonc 0.10.14 or newer**; check with
+`moon version --all`. This module declares its `moonbitlang/x` dependency in
+`moon.mod`, so `moon update` resolves it. Native builds also require a C
+compiler (MSVC on Windows, GCC or Clang on Linux).
 
 ```bash
 moon update  # fetch the Mooncakes index for moonbitlang/x
 moon build --target native
 # Windows binary: _build/native/debug/build/cmd/main/main.exe
 moon run cmd/main -- path/to/project
-moon test --target native  # 45 tests, including broad delimiter smoke tests
+moon test --target native  # 47 tests, including broad delimiter smoke tests
 python tools/verify_release.py  # checks build, tests, language table and CLI
 ```
 
@@ -58,8 +64,26 @@ optional official differential checks, pass a Tokei 12.1.2 executable:
 python .\tools\verify_release.py --upstream C:\path\to\tokei.exe
 ```
 
-Requires the MoonBit toolchain (https://www.moonbitlang.com) and
-`moonbitlang/x` (`moon add moonbitlang/x`).
+If a Windows compiler reports `Sys_error("\\\\?: Invalid argument")` while
+building from a path containing non-ASCII characters, try an ASCII-only
+checkout path. This is a local toolchain path error; the Windows CI checkout
+uses an ASCII path.
+
+## Runnable quickstart
+
+The repository includes a tiny MoonBit/Python project in
+[`examples/quickstart`](examples/quickstart). From the repository root:
+
+```bash
+moon update
+moon run cmd/main -- examples/quickstart
+moon run cmd/main -- -f examples/quickstart
+moon run cmd/main -- -o json examples/quickstart
+```
+
+The first command prints one MoonBit row, one Python row and a total. The
+second expands the individual files; the third emits machine-readable JSON.
+No project files are modified by these commands.
 
 ## Usage
 
@@ -151,8 +175,24 @@ numbers. JSON `--input` accepts a saved report file and preserves
 per-file and child-language counts.
 
 `tools/verify_release.py` is the local release gate. It verifies that all 333
-generated language keys match the pinned official table, runs strict MoonBit
-checks and tests, builds the native CLI, and checks a real MoonBit JSON report.
+generated language keys match the pinned official table, enforces the
+minimum compiler version, runs strict MoonBit checks and tests, builds the
+native CLI, and exercises real CLI paths for formats, filters, ignore rules,
+saved report merging and file output.
+
+The Linux CI job also runs `moon test --target native --enable-coverage`,
+prints `moon coverage report -f summary`, and checks packaging with
+`moon publish --dry-run`. These checks do not upload a package.
+
+## Mooncakes publication
+
+The module metadata and license are in `moon.mod` and `LICENSE`. To publish,
+first create or sign in to a [Mooncakes account](https://mooncakes.io), then
+make sure the `owner` in the module name `owner/tokei` matches that account.
+From a clean checkout, run `moon update`, `python tools/verify_release.py`,
+`moon publish --dry-run`, and finally `moon publish`. The last command uploads
+the package; it requires the maintainer's account. The module has **not**
+been published yet.
 
 ## Attribution & License
 

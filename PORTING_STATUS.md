@@ -9,7 +9,8 @@ that older table would remove a core reason for this port.
 
 ## Verified on Windows/native
 
-- `moon test --target native`: 44 passed (2026-10-24).
+- `moon test --target native`: 47 passed (2026-10-27, from an ASCII-path
+  copy of the checkout on Windows).
 - `moon check --target native --deny-warn` and `moon build --target native`
   pass.
 - `moon build --target native` produced a working Windows executable. An
@@ -43,6 +44,11 @@ that older table would remove a core reason for this port.
   embedded rows as upstream does, while `-f -C` retains the per-file details.
 - `--input <file>` reads official or TokeiMBT JSON reports, preserving file and
   child-language data, and merges their counts with a fresh scan.
+- The release gate also exercises five-language sample output, type filters,
+  `--files`, JSON/CSV/YAML, `--output-file`, and ignore/exclude behavior.
+- Native coverage instrumentation reports 1,124 / 1,621 covered points on
+  2026-10-27. The `cmd/main` entry point is exercised by CLI integration
+  checks but is not instrumented by the unit-test coverage run.
 
 ## Next compatibility milestones
 
