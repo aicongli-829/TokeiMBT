@@ -44,6 +44,19 @@ fn parse_line(line : String, base : String) -> Rule? {
   if s.length() == 0 {
     return None
   }
+  // Git removes unescaped trailing spaces before interpreting the pattern.
+  // In particular, "build/ " is still a directory rule, while "name\\ "
+  // matches a file whose name ends in a space.
+  let mut trimmed = s
+  while trimmed.length() > 0 &&
+        ends_with(trimmed, " ") &&
+        !is_escaped_at(trimmed, trimmed.length() - 1) {
+    trimmed = trimmed[0:trimmed.length() - 1].to_owned()
+  }
+  if trimmed.length() == 0 {
+    return None
+  }
+  s = trimmed
   let mut dir_only = false
   if ends_with(s, "/") {
     dir_only = true
@@ -52,17 +65,19 @@ fn parse_line(line : String, base : String) -> Rule? {
       return None
     }
   }
-  // Trailing spaces are trimmed unless escaped with backslash.
-  let mut trimmed = s
-  while trimmed.length() > 0 && ends_with(trimmed, " ") {
-    trimmed = trimmed[0:trimmed.length() - 1].to_owned()
-  }
-  if trimmed.length() == 0 {
-    return None
-  }
-  s = trimmed
   let anchored = contains_str(s, "/")
   Some({ pattern: s, negated, dir_only, anchored, base, })
+}
+
+///|
+fn is_escaped_at(s : String, pos : Int32) -> Bool {
+  let mut backslashes = 0
+  let mut i = pos - 1
+  while i >= 0 && s.at(i).to_int() == 0x5C {
+    backslashes += 1
+    i -= 1
+  }
+  backslashes % 2 == 1
 }
 
 ///|

@@ -38,6 +38,29 @@ test "rule parsing: negation, dir-only, anchoring" {
 }
 
 ///|
+test "gitignore preserves escaped trailing spaces and trims ordinary ones" {
+  let escaped = parse_line("report\\ ", "").unwrap()
+  assert_eq(escaped.pattern, "report\\ ")
+  assert_eq(glob_match_seg(escaped.pattern, "report "), true)
+  assert_eq(glob_match_seg(escaped.pattern, "report"), false)
+  let ordinary = parse_line("report  ", "").unwrap()
+  assert_eq(ordinary.pattern, "report")
+  let directory = parse_line("build/  ", "").unwrap()
+  assert_eq(directory.pattern, "build")
+  assert_eq(directory.dir_only, true)
+  let doubled = parse_line("report\\\\ ", "").unwrap()
+  assert_eq(doubled.pattern, "report\\\\")
+}
+
+///|
+test "gitignore matches escaped leading punctuation literally" {
+  let stack = IgnoreStack::new()
+  stack.push_file("", "\\#draft.rs\n\\!important.rs\n")
+  assert_eq(stack.is_ignored("#draft.rs", false), true)
+  assert_eq(stack.is_ignored("!important.rs", false), true)
+}
+
+///|
 test "ignore stack: gitignore semantics end to end" {
   let stack = IgnoreStack::new()
   stack.push_file("", "target\n*.log\n!important.log\n")
