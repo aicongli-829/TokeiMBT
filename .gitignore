@@ -3,3 +3,4 @@ target/
 _build/
 *.generated.mbti
 .scratch/
+__pycache__/

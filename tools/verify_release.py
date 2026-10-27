@@ -21,6 +21,7 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "vendor/tokei-v15.0.0/languages.json"
 GENERATED = ROOT / "lang/data.mbt"
+MIN_MOONC_VERSION = (0, 10, 14)
 
 
 def run(*args: str) -> str:
@@ -51,6 +52,19 @@ def verify_language_table() -> None:
     print(f"language definitions: {len(official)} official v15 keys match generated MoonBit data")
 
 
+def verify_toolchain() -> None:
+    output = run("moon", "version", "--all")
+    match = re.search(r"\bmoonc v(\d+)\.(\d+)\.(\d+)\b", output)
+    if not match:
+        raise SystemExit("Could not determine moonc version from moon version --all")
+    version = tuple(map(int, match.groups()))
+    if version < MIN_MOONC_VERSION:
+        raise SystemExit(
+            f"moonc {'.'.join(map(str, version))} is below required 0.10.14"
+        )
+    print(f"moonc version: {'.'.join(map(str, version))} (minimum 0.10.14)")
+
+
 def binary_path() -> pathlib.Path:
     path = ROOT / "_build/native/debug/build/cmd/main/main"
     if sys.platform == "win32":
@@ -77,6 +91,23 @@ def verify_cli(expected_languages: int) -> None:
         raise SystemExit("CLI could not count its own MoonBit source file")
     if report["Total"]["code"] != moonbit["code"]:
         raise SystemExit("Total and MoonBit counts disagree")
+    fixture = "tests/fixtures/plain"
+    multi = json.loads(run_cli("-o", "json", fixture))
+    if multi["Total"]["code"] != 23 or set(multi) != {
+        "C", "Go", "JavaScript", "Python", "Rust", "Total"
+    }:
+        raise SystemExit("CLI sample does not match the documented five-language report")
+    selected = json.loads(run_cli("-o", "json", "-t", "python,rust", fixture))
+    if set(selected) != {"Python", "Rust", "Total"} or selected["Total"]["code"] != 11:
+        raise SystemExit("CLI language filter did not keep only Python and Rust")
+    if "raw.rs" not in run_cli("--files", fixture):
+        raise SystemExit("CLI per-file table omitted the Rust sample")
+    if not run_cli("-o", "csv", fixture).startswith(
+        "Language,Files,Lines,Code,Comments,Blanks\n"
+    ):
+        raise SystemExit("CLI CSV header is missing")
+    if not run_cli("-o", "yaml", fixture).startswith("---\n"):
+        raise SystemExit("CLI YAML document marker is missing")
     with tempfile.TemporaryDirectory() as tmp:
         saved = pathlib.Path(tmp) / "previous.json"
         saved.write_text(json.dumps(report), encoding="utf-8")
@@ -86,7 +117,23 @@ def verify_cli(expected_languages: int) -> None:
             raise SystemExit("CLI could not merge a saved report with a fresh scan")
         if len(merged["MoonBit"]["reports"]) != 2:
             raise SystemExit("Saved per-file reports were not preserved")
-    print("CLI smoke test: language listing, MoonBit report and saved JSON merge pass")
+        exported = pathlib.Path(tmp) / "export.json"
+        run_cli("--output-file", exported, "-o", "json", fixture)
+        if json.loads(exported.read_text(encoding="utf-8")) != multi:
+            raise SystemExit("CLI --output-file differs from stdout JSON")
+        scan = pathlib.Path(tmp) / "scan"
+        scan.mkdir()
+        (scan / "keep.rs").write_text("fn keep() {}\n", encoding="utf-8")
+        (scan / "skip.rs").write_text("fn skip() {}\n", encoding="utf-8")
+        (scan / ".gitignore").write_text("skip.rs\n", encoding="utf-8")
+        ignored = json.loads(run_cli("-o", "json", scan))
+        unignored = json.loads(run_cli("-o", "json", "--no-ignore-vcs", scan))
+        excluded = json.loads(run_cli("-o", "json", "--no-ignore-vcs",
+                                      "-e", "skip.rs", scan))
+        if (len(ignored["Rust"]["reports"]), len(unignored["Rust"]["reports"]),
+                len(excluded["Rust"]["reports"])) != (1, 2, 1):
+            raise SystemExit("CLI ignore and explicit exclude behavior disagrees")
+    print("CLI integration: sample, filters, formats, files, ignore and JSON merge pass")
 
 
 def verify_terminal_parity(binary: pathlib.Path, upstream: pathlib.Path) -> None:
@@ -126,6 +173,7 @@ def main() -> int:
     parser.add_argument("--upstream", type=pathlib.Path,
                         help="optional official Tokei 12.1.2 executable")
     args = parser.parse_args()
+    verify_toolchain()
     verify_language_table()
     run("moon", "check", "--target", "native", "--deny-warn")
     print("moon check: pass")
