@@ -182,7 +182,9 @@ saved report merging and file output.
 
 The Linux CI job also runs `moon test --target native --enable-coverage`,
 prints `moon coverage report -f summary`, and checks packaging with
-`moon publish --dry-run`. These checks do not upload a package.
+`moon package --list`. These checks do not require publishing credentials or
+upload a package. `moon publish --dry-run` is a separate maintainer check that
+requires a Mooncakes login even though it does not upload.
 
 ## Mooncakes publication
 

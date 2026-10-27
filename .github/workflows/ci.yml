@@ -23,6 +23,6 @@ jobs:
         run: |
           moon test --target native --enable-coverage
           moon coverage report -f summary
-      - name: Check Mooncakes package without publishing
+      - name: Check Mooncakes package contents without credentials
         if: runner.os == 'Linux'
-        run: moon publish --dry-run
+        run: moon package --list
