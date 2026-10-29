@@ -49,6 +49,8 @@ The required compiler version is **moonc 0.10.16 or newer**; check with
 compiler (MSVC on Windows, GCC or Clang on Linux).
 
 ```bash
+git clone https://github.com/aicongli-829/TokeiMBT.git
+cd TokeiMBT
 moon update  # fetch the Mooncakes index for moonbitlang/x
 moon build --target native
 # Windows binary: _build/native/debug/build/cmd/main/main.exe
@@ -188,13 +190,11 @@ requires a Mooncakes login even though it does not upload.
 
 ## Mooncakes publication
 
-The module metadata and license are in `moon.mod` and `LICENSE`. To publish,
-first create or sign in to a [Mooncakes account](https://mooncakes.io), then
-make sure the `owner` in the module name `owner/tokei` matches that account.
-From a clean checkout, run `moon update`, `python tools/verify_release.py`,
-`moon publish --dry-run`, and finally `moon publish`. The last command uploads
-the package; it requires the maintainer's account. The module has **not**
-been published yet.
+The module is [published on Mooncakes](https://mooncakes.io/docs/aicongli-829/tokei).
+Its metadata and license are in `moon.mod` and `LICENSE`. The CLI quickstart
+above runs from a source checkout. For a new release, the maintainer runs
+`moon update`, `python tools/verify_release.py`, `moon publish --dry-run`, and
+then `moon publish` using the `aicongli-829` Mooncakes account.
 
 ## Attribution & License
 

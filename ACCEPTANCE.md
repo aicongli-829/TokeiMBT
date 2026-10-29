@@ -1,8 +1,7 @@
 # October hackathon acceptance checklist
 
-This tracks the October acceptance criteria supplied by the organizer. It
-distinguishes verified work from Mooncakes publication, which is deferred at
-the maintainer's request.
+This tracks the October acceptance criteria supplied by the organizer and
+links to the evidence for each item.
 
 | Criterion | Current evidence |
 | --- | --- |
@@ -13,7 +12,7 @@ the maintainer's request.
 | CI checks coverage, build and tests | [GitHub Actions workflow](.github/workflows/ci.yml) runs on Linux and Windows; Linux also reports coverage and lists the package contents. |
 | Runnable example | `moon run cmd/main -- examples/quickstart`; [example sources](examples/quickstart). |
 | Core-path tests | 47 MoonBit tests plus `tools/verify_release.py` integration checks for formats, filters, ignores, file output and saved-report merging. |
-| Mooncakes publication | **Pending.** Maintainer must register/log in, align the module owner with that account, run `moon publish --dry-run`, then run `moon publish`. CI uses the credential-free `moon package --list` check. |
+| Mooncakes publication | [aicongli-829/tokei](https://mooncakes.io/docs/aicongli-829/tokei) is public; CI also runs the credential-free `moon package --list` check. |
 | OSI license and upstream attribution | [Apache-2.0 LICENSE](LICENSE); [Tokei language-table attribution](vendor/tokei-v15.0.0/README.md). |
 
 The 333 imported language definitions are not a claim that every
