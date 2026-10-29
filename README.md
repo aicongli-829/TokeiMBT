@@ -43,7 +43,7 @@ Run `moon run cmd/main -- tests/fixtures/plain` to get a real sample report:
 ## Install, build and run
 
 Install the [MoonBit toolchain](https://www.moonbitlang.com/download/) first.
-The required compiler version is **moonc 0.10.14 or newer**; check with
+The required compiler version is **moonc 0.10.16 or newer**; check with
 `moon version --all`. This module declares its `moonbitlang/x` dependency in
 `moon.mod`, so `moon update` resolves it. Native builds also require a C
 compiler (MSVC on Windows, GCC or Clang on Linux).

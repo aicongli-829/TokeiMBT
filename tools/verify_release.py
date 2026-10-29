@@ -21,7 +21,7 @@ import tempfile
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SNAPSHOT = ROOT / "vendor/tokei-v15.0.0/languages.json"
 GENERATED = ROOT / "lang/data.mbt"
-MIN_MOONC_VERSION = (0, 10, 14)
+MIN_MOONC_VERSION = (0, 10, 16)
 
 
 def run(*args: str) -> str:
@@ -58,11 +58,12 @@ def verify_toolchain() -> None:
     if not match:
         raise SystemExit("Could not determine moonc version from moon version --all")
     version = tuple(map(int, match.groups()))
+    minimum = ".".join(map(str, MIN_MOONC_VERSION))
     if version < MIN_MOONC_VERSION:
         raise SystemExit(
-            f"moonc {'.'.join(map(str, version))} is below required 0.10.14"
+            f"moonc {'.'.join(map(str, version))} is below required {minimum}"
         )
-    print(f"moonc version: {'.'.join(map(str, version))} (minimum 0.10.14)")
+    print(f"moonc version: {'.'.join(map(str, version))} (minimum {minimum})")
 
 
 def binary_path() -> pathlib.Path:
