@@ -1,4 +1,4 @@
-name = "aicongli829/tokei"
+name = "aicongli-829/tokei"
 
 version = "0.1.0"
 

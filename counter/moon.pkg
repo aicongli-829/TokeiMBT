@@ -1,4 +1,4 @@
 import {
-  "aicongli829/tokei/lang",
+  "aicongli-829/tokei/lang",
   "moonbitlang/core/json",
 }

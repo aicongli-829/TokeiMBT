@@ -1,5 +1,5 @@
 import {
-  "aicongli829/tokei/report",
-  "aicongli829/tokei/counter",
-  "aicongli829/tokei/lang",
+  "aicongli-829/tokei/report",
+  "aicongli-829/tokei/counter",
+  "aicongli-829/tokei/lang",
 }

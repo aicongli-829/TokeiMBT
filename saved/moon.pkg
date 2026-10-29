@@ -1,5 +1,5 @@
 import {
   "moonbitlang/core/json",
-  "aicongli829/tokei/counter",
-  "aicongli829/tokei/lang",
+  "aicongli-829/tokei/counter",
+  "aicongli-829/tokei/lang",
 }

@@ -1,12 +1,12 @@
 import {
   "moonbitlang/x/fs",
   "moonbitlang/core/env",
-  "aicongli829/tokei/lang",
-  "aicongli829/tokei/counter",
-  "aicongli829/tokei/walk",
-  "aicongli829/tokei/report",
-  "aicongli829/tokei/output",
-  "aicongli829/tokei/saved",
+  "aicongli-829/tokei/lang",
+  "aicongli-829/tokei/counter",
+  "aicongli-829/tokei/walk",
+  "aicongli-829/tokei/report",
+  "aicongli-829/tokei/output",
+  "aicongli-829/tokei/saved",
 }
 
 pkgtype(kind: "executable")

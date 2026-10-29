@@ -12,7 +12,7 @@ scope is documented in [PORTING_STATUS.md](PORTING_STATUS.md).
 The imported table includes MoonBit. The v12.1.2 executable serves as a
 comparison reference for definitions shared by the two releases.
 
-The MoonBit module is `aicongli829/tokei`.
+The MoonBit module is `aicongli-829/tokei`.
 
 Run `moon run cmd/main -- tests/fixtures/plain` to get a real sample report:
 
